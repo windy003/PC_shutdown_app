@@ -7,7 +7,7 @@ import time
 class ShutdownTimer:
     def __init__(self, root):
         self.root = root
-        self.root.title("定时关机程序:2025.5.26-02")
+        self.root.title("定时关机程序:2025.5.26-03")
         
         # 设置窗口最大化而不是全屏
         # self.root.attributes('-fullscreen', True)  # 注释掉全屏设置
