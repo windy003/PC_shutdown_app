@@ -8,21 +8,30 @@ class ShutdownTimer:
     def __init__(self, root):
         self.root = root
         self.root.title("定时关机程序:2025.5.26-02")
-        self.root.geometry("400x200")
-        self.root.resizable(False, False)
+        
+        # 设置窗口最大化而不是全屏
+        # self.root.attributes('-fullscreen', True)  # 注释掉全屏设置
+        self.root.state('zoomed')  # 使用zoomed状态代替，这样会保留标题栏和任务栏
+        
+        # 允许调整窗口大小
+        # self.root.geometry("400x200")
+        self.root.resizable(True, True)
+        
+        # 设置背景颜色为红色
+        self.root.configure(bg="red")
         
         self.is_timer_running = False
         self.remaining_time = 0
         self.timer_thread = None
         
         # 创建界面元素
-        tk.Label(root, text="请输入关机倒计时(分钟):", font=("微软雅黑", 12)).pack(pady=10)
+        tk.Label(root, text="请输入关机倒计时(分钟):", font=("微软雅黑", 18), bg="red", fg="white").pack(pady=20)
         
         # 输入框和标签
-        self.input_frame = tk.Frame(root)
-        self.input_frame.pack(pady=5)
+        self.input_frame = tk.Frame(root, bg="red")
+        self.input_frame.pack(pady=10)
         
-        self.minutes_entry = tk.Entry(self.input_frame, width=10, font=("微软雅黑", 12))
+        self.minutes_entry = tk.Entry(self.input_frame, width=10, font=("微软雅黑", 18))
         self.minutes_entry.pack(side=tk.LEFT, padx=5)
         self.minutes_entry.insert(0, "30")  # 设置默认值为30分钟
         
@@ -31,29 +40,33 @@ class ShutdownTimer:
         root.bind("<Alt-m>", lambda e: self.minutes_entry.focus_set())
         
         # 按钮框架
-        self.button_frame = tk.Frame(root)
-        self.button_frame.pack(pady=10)
+        self.button_frame = tk.Frame(root, bg="red")
+        self.button_frame.pack(pady=20)
         
         # 开始按钮
-        self.start_button = tk.Button(self.button_frame, text="开始(S)", command=self.start_timer)
-        self.start_button.pack(side=tk.LEFT, padx=5)
+        self.start_button = tk.Button(self.button_frame, text="开始(S)", command=self.start_timer, 
+                                     font=("微软雅黑", 14), width=10, height=2)
+        self.start_button.pack(side=tk.LEFT, padx=20)
         root.bind("<Alt-s>", lambda e: self.start_timer())
         root.bind("<Return>", lambda e: self.start_timer())  # 添加回车键绑定
         root.bind("<space>", lambda e: self.start_timer())   # 添加空格键绑定
         
         # 取消按钮
-        self.cancel_button = tk.Button(self.button_frame, text="取消(C)", command=self.cancel_timer, state=tk.DISABLED)
-        self.cancel_button.pack(side=tk.LEFT, padx=5)
+        self.cancel_button = tk.Button(self.button_frame, text="取消(C)", command=self.cancel_timer, 
+                                      state=tk.DISABLED, font=("微软雅黑", 14), width=10, height=2)
+        self.cancel_button.pack(side=tk.LEFT, padx=20)
         root.bind("<Alt-c>", lambda e: self.cancel_timer())
         
         # 退出按钮
-        self.exit_button = tk.Button(self.button_frame, text="退出(Q)", command=self.quit_app)
-        self.exit_button.pack(side=tk.LEFT, padx=5)
+        self.exit_button = tk.Button(self.button_frame, text="退出(Q)", command=self.quit_app,
+                                    font=("微软雅黑", 14), width=10, height=2)
+        self.exit_button.pack(side=tk.LEFT, padx=20)
         root.bind("<Alt-q>", lambda e: self.quit_app())
+        root.bind("<Escape>", lambda e: self.quit_app())  # 添加ESC键退出
         
         # 倒计时标签
-        self.time_label = tk.Label(root, text="倒计时: 未开始", font=("微软雅黑", 14))
-        self.time_label.pack(pady=10)
+        self.time_label = tk.Label(root, text="倒计时: 未开始", font=("微软雅黑", 30), bg="red", fg="white")
+        self.time_label.pack(pady=30)
 
         # 设置窗口关闭时的操作
         self.root.protocol("WM_DELETE_WINDOW", self.quit_app)
