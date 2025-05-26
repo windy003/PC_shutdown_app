@@ -7,7 +7,7 @@ import time
 class ShutdownTimer:
     def __init__(self, root):
         self.root = root
-        self.root.title("定时关机程序:2025.5.26-01")
+        self.root.title("定时关机程序:2025.5.26-02")
         self.root.geometry("400x200")
         self.root.resizable(False, False)
         
@@ -24,9 +24,10 @@ class ShutdownTimer:
         
         self.minutes_entry = tk.Entry(self.input_frame, width=10, font=("微软雅黑", 12))
         self.minutes_entry.pack(side=tk.LEFT, padx=5)
+        self.minutes_entry.insert(0, "30")  # 设置默认值为30分钟
         
         # 设置输入框的快捷键
-        self.minutes_entry.focus_set()
+        # self.minutes_entry.focus_set()  # 注释掉这行，不再默认聚焦在输入框
         root.bind("<Alt-m>", lambda e: self.minutes_entry.focus_set())
         
         # 按钮框架
@@ -37,6 +38,8 @@ class ShutdownTimer:
         self.start_button = tk.Button(self.button_frame, text="开始(S)", command=self.start_timer)
         self.start_button.pack(side=tk.LEFT, padx=5)
         root.bind("<Alt-s>", lambda e: self.start_timer())
+        root.bind("<Return>", lambda e: self.start_timer())  # 添加回车键绑定
+        root.bind("<space>", lambda e: self.start_timer())   # 添加空格键绑定
         
         # 取消按钮
         self.cancel_button = tk.Button(self.button_frame, text="取消(C)", command=self.cancel_timer, state=tk.DISABLED)
@@ -54,6 +57,9 @@ class ShutdownTimer:
 
         # 设置窗口关闭时的操作
         self.root.protocol("WM_DELETE_WINDOW", self.quit_app)
+        
+        # 程序启动时聚焦在开始按钮上
+        self.start_button.focus_set()
     
     def start_timer(self):
         # 如果计时器已经在运行，则不做任何操作
