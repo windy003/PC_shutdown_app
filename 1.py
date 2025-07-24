@@ -7,7 +7,7 @@ import time
 class ShutdownTimer:
     def __init__(self, root):
         self.root = root
-        self.root.title("定时关机程序:2025.5.26-03")
+        self.root.title("定时关机程序:2025/07/24-01")
         
         # 设置窗口最大化而不是全屏
         # self.root.attributes('-fullscreen', True)  # 注释掉全屏设置
@@ -17,18 +17,20 @@ class ShutdownTimer:
         # self.root.geometry("400x200")
         self.root.resizable(True, True)
         
-        # 设置背景颜色为红色
-        self.root.configure(bg="red")
+        # 初始背景颜色为绿色
+        self.current_bg_color = "green"
+        self.root.configure(bg=self.current_bg_color)
         
         self.is_timer_running = False
         self.remaining_time = 0
         self.timer_thread = None
         
         # 创建界面元素
-        tk.Label(root, text="请输入关机倒计时(分钟):", font=("微软雅黑", 18), bg="red", fg="white").pack(pady=20)
+        self.title_label = tk.Label(root, text="请输入关机倒计时(分钟):", font=("微软雅黑", 18), bg=self.current_bg_color, fg="white")
+        self.title_label.pack(pady=20)
         
         # 输入框和标签
-        self.input_frame = tk.Frame(root, bg="red")
+        self.input_frame = tk.Frame(root, bg=self.current_bg_color)
         self.input_frame.pack(pady=10)
         
         self.minutes_entry = tk.Entry(self.input_frame, width=10, font=("微软雅黑", 18))
@@ -40,7 +42,7 @@ class ShutdownTimer:
         root.bind("<Alt-m>", lambda e: self.minutes_entry.focus_set())
         
         # 按钮框架
-        self.button_frame = tk.Frame(root, bg="red")
+        self.button_frame = tk.Frame(root, bg=self.current_bg_color)
         self.button_frame.pack(pady=20)
         
         # 开始按钮
@@ -65,7 +67,7 @@ class ShutdownTimer:
         root.bind("<Escape>", lambda e: self.quit_app())  # 添加ESC键退出
         
         # 倒计时标签
-        self.time_label = tk.Label(root, text="倒计时: 未开始", font=("微软雅黑", 30), bg="red", fg="white")
+        self.time_label = tk.Label(root, text="倒计时: 未开始", font=("微软雅黑", 30), bg=self.current_bg_color, fg="white")
         self.time_label.pack(pady=30)
 
         # 设置窗口关闭时的操作
@@ -73,6 +75,15 @@ class ShutdownTimer:
         
         # 程序启动时聚焦在开始按钮上
         self.start_button.focus_set()
+    
+    def update_background_color(self, color):
+        """更新所有界面元素的背景颜色"""
+        self.current_bg_color = color
+        self.root.configure(bg=color)
+        self.title_label.configure(bg=color)
+        self.input_frame.configure(bg=color)
+        self.button_frame.configure(bg=color)
+        self.time_label.configure(bg=color)
     
     def start_timer(self):
         # 如果计时器已经在运行，则不做任何操作
@@ -94,7 +105,8 @@ class ShutdownTimer:
         # 设置Windows关机命令
         subprocess.run(f"shutdown /s /t {self.remaining_time}", shell=True)
         
-        # 更新界面状态
+        # 更新界面状态和背景颜色为红色
+        self.update_background_color("red")
         self.start_button.config(state=tk.DISABLED)
         self.cancel_button.config(state=tk.NORMAL)
         self.minutes_entry.config(state=tk.DISABLED)
@@ -131,7 +143,8 @@ class ShutdownTimer:
         self.is_timer_running = False
         self.time_label.config(text="倒计时: 已取消")
         
-        # 恢复界面状态
+        # 恢复界面状态和背景颜色为绿色
+        self.update_background_color("green")
         self.start_button.config(state=tk.NORMAL)
         self.cancel_button.config(state=tk.DISABLED)
         self.minutes_entry.config(state=tk.NORMAL)
